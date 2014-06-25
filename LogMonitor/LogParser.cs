@@ -23,7 +23,14 @@ namespace LogMonitor
             this.xml_path = LogMonitor.Properties.Settings.Default.Xml_Destination_Path + "\\" + file_path.Substring(file_path.LastIndexOf("\\") + 1) +DateTime.Now.ToString("yy-MM-dd-HH_mm") +".xml";
             currentlog = new LogMessages();
             currentlog.Items = new List<LogMessage>();
-            parseNew();
+            try
+            {
+                parseNew();
+            }
+            catch (Exception e)
+            {
+                
+            }
 
         }
 

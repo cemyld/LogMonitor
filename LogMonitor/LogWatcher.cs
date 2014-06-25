@@ -32,12 +32,15 @@ namespace LogMonitor
                 IsWatching = true;
                 m_Watcher = new System.IO.FileSystemWatcher();
                 file_path = LogMonitor.Properties.Settings.Default.Log_Path;
-                if (file_path == "")
+                try
+                {
+                    m_Watcher.Filter = file_path.Substring(file_path.LastIndexOf("\\") + 1);
+                    m_Watcher.Path = file_path.Substring(0, file_path.Length - m_Watcher.Filter.Length);
+                }
+                catch (Exception e)
                 {
                     return;
                 }
-                m_Watcher.Filter = file_path.Substring(file_path.LastIndexOf("\\")+1);
-                m_Watcher.Path = file_path.Substring(0,file_path.Length - m_Watcher.Filter.Length);
 
                 m_Watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.Size;
                 m_Watcher.Changed += new FileSystemEventHandler(OnChange);

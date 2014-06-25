@@ -19,16 +19,22 @@ namespace LogMonitor
         Thread messagenotifier;
         Queue<LogMessage> messagequeue;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ProcessIcon()
         {
-
-            ni = new NotifyIcon();
             isWatched = false;
-            watcher = new LogWatcher();
             isSettingsLoaded = false;
-            messagequeue = new Queue<LogMessage>();
 
+            ni = new NotifyIcon();           
+            watcher = new LogWatcher();            
+            messagequeue = new Queue<LogMessage>();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public void Display()
         {
             watcher.filechanged += new EventHandler(watcher_FileChange);
@@ -42,7 +48,7 @@ namespace LogMonitor
             //Start toggled
             ni_MouseClick(this, new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
             messagenotifier = new Thread(new ThreadStart(ConsumeQueue));
-            messagenotifier.Start();
+            messagenotifier.Start();           
         }
 
         private void ConsumeQueue()
@@ -50,7 +56,7 @@ namespace LogMonitor
             const int MESSAGELIMIT = 3;
             while (true)
             {
-                while (messagequeue.Count <= MESSAGELIMIT & messagequeue.Count > 0)
+                if (messagequeue.Count <= MESSAGELIMIT & messagequeue.Count > 0)
                 {
                     LogMessage message = messagequeue.Dequeue();
                     ni.BalloonTipTitle = message.Type;
@@ -58,11 +64,11 @@ namespace LogMonitor
                     ni.ShowBalloonTip(30000);
                     System.Threading.Thread.Sleep(2000);
                 }
-                if (messagequeue.Count > MESSAGELIMIT)
+                else if (messagequeue.Count > MESSAGELIMIT)
                 {
                     messagequeue.Dequeue();
                 }
-            }
+            }           
         }
         public void Dispose()
         {
@@ -72,7 +78,7 @@ namespace LogMonitor
         //Toggle watching
         private void ni_MouseClick(object sender, MouseEventArgs e)
         {
-            if (Properties.Settings.Default.Log_Path == "" && e.Button == MouseButtons.Left)
+            if (Properties.Settings.Default.Log_Path == string.Empty && e.Button == MouseButtons.Left)
             {
                 if (!isSettingsLoaded)
                 {
@@ -81,7 +87,6 @@ namespace LogMonitor
                     new SettingsPanel().ShowDialog();
                     isSettingsLoaded = false;
                     return;
-
                 }
             }
             if (e.Button == MouseButtons.Left)
